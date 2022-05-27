@@ -2,7 +2,6 @@
 
 use embedded_hal::serial::{Read, Write};
 use nb::block;
-use scroll::{Pread, Pwrite, BE};
 
 mod read_fsm;
 
@@ -167,23 +166,23 @@ impl OutputFrame {
         let mut frame = OutputFrame::default();
         let mut offset = 0usize;
 
-        frame.start1 = buffer.gread::<u8>(&mut offset).unwrap();
-//        frame.start2 = buffer.gread::<u8>(&mut offset).unwrap();
-//        frame.frame_length = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.pm1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.pm2_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.pm10 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.pm1_0_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.pm2_5_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.pm10_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.beyond_0_3 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.beyond_0_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.beyond_1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.beyond_2_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.beyond_5_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.beyond_10_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.reserved = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-//        frame.check = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.start1 = buffer[0].unwrap(); //.gread::<u8>(&mut offset).unwrap();
+        frame.start2 = buffer[1].unwrap(); //.gread::<u8>(&mut offset).unwrap();
+        frame.frame_length = buffer[2]*256 + buffer[3]; //.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.pm1_0 = buffer[4]*256 + buffer[5]; //.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.pm2_5 = buffer[6]*256 + buffer[7]; //.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.pm10 = buffer[8]*256 + buffer[9]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.pm1_0_atm = buffer[10]*256 + buffer[11]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.pm2_5_atm = buffer[12]*256 + buffer[13]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.pm10_atm = buffer[14]*256 + buffer[15]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.beyond_0_3 = buffer[16]*256 + buffer[17]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.beyond_0_5 = buffer[18]*256 + buffer[19]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.beyond_1_0 = buffer[20]*256 + buffer[21]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.beyond_2_5 = buffer[22]*256 + buffer[23]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.beyond_5_0 = buffer[24]*256 + buffer[25]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.beyond_10_0 = buffer[26]*256 + buffer[27]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.reserved = buffer[28]*256 + buffer[29]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.check = buffer[30]*256 + buffer[31]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
 
         if sum != frame.check as usize {
             return Err(Error::ChecksumError);

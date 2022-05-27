@@ -164,12 +164,13 @@ impl OutputFrame {
             .sum();
 
         let mut frame = OutputFrame::default();
-        let mut offset = 0usize;
 
-        frame.start1 = buffer[0].unwrap(); //.gread::<u8>(&mut offset).unwrap();
-        frame.start2 = buffer[1].unwrap(); //.gread::<u8>(&mut offset).unwrap();
-        frame.frame_length = buffer[2]*256 + buffer[3]; //.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm1_0 = buffer[4]*256 + buffer[5]; //.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.start1 = buffer[0]; //.gread::<u8>(&mut offset).unwrap();
+        frame.start2 = buffer[1]; //.gread::<u8>(&mut offset).unwrap();
+        let mut temp = buffer[2] as u16;
+        frame.frame_length = temp*256 + buffer[3]; //.gread_with::<u16>(&mut offset, BE).unwrap();
+        temp = buffer[4] as u16;
+        frame.pm1_0 = temp*256 + buffer[5]; //.gread_with::<u16>(&mut offset, BE).unwrap();
         frame.pm2_5 = buffer[6]*256 + buffer[7]; //.gread_with::<u16>(&mut offset, BE).unwrap();
         frame.pm10 = buffer[8]*256 + buffer[9]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
         frame.pm1_0_atm = buffer[10]*256 + buffer[11]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();

@@ -2,7 +2,7 @@
 
 use embedded_hal::serial::{Read, Write};
 use nb::block;
-//use scroll::{Pread, Pwrite, BE};
+use scroll::{Pread, Pwrite, BE};
 
 mod read_fsm;
 
@@ -167,7 +167,7 @@ impl OutputFrame {
         let mut frame = OutputFrame::default();
         let mut offset = 0usize;
 
-//        frame.start1 = buffer.gread::<u8>(&mut offset).unwrap();
+        frame.start1 = buffer.gread::<u8>(&mut offset).unwrap();
 //        frame.start2 = buffer.gread::<u8>(&mut offset).unwrap();
 //        frame.frame_length = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
 //        frame.pm1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();

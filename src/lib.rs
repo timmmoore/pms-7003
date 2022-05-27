@@ -165,25 +165,23 @@ impl OutputFrame {
 
         let mut frame = OutputFrame::default();
 
-        frame.start1 = buffer[0]; //.gread::<u8>(&mut offset).unwrap();
-        frame.start2 = buffer[1]; //.gread::<u8>(&mut offset).unwrap();
-        let mut temp = buffer[2] as u16;
-        frame.frame_length = temp*256 + buffer[3] as u16; //.gread_with::<u16>(&mut offset, BE).unwrap();
-        temp = buffer[4] as u16;
-        frame.pm1_0 = temp*256 + buffer[5] as u16; //.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm2_5 = (buffer[6] as u16)*256 + buffer[7] as u16; //.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm10 = buffer[8]*256 + buffer[9]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm1_0_atm = buffer[10]*256 + buffer[11]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm2_5_atm = buffer[12]*256 + buffer[13]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm10_atm = buffer[14]*256 + buffer[15]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_0_3 = buffer[16]*256 + buffer[17]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_0_5 = buffer[18]*256 + buffer[19]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_1_0 = buffer[20]*256 + buffer[21]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_2_5 = buffer[22]*256 + buffer[23]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_5_0 = buffer[24]*256 + buffer[25]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_10_0 = buffer[26]*256 + buffer[27]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.reserved = buffer[28]*256 + buffer[29]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.check = buffer[30]*256 + buffer[31]; //buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.start1 = buffer[0];
+        frame.start2 = buffer[1];
+        frame.frame_length = (buffer[2] as u16)*256 + buffer[3] as u16;
+        frame.pm1_0 = (buffer[4] as u16)*256 + buffer[5] as u16;
+        frame.pm2_5 = (buffer[6] as u16)*256 + buffer[7] as u16;
+        frame.pm10 = (buffer[8] as u16)*256 + buffer[9] as u16;
+        frame.pm1_0_atm = (buffer[10] as u16)*256 + buffer[11] as u16;
+        frame.pm2_5_atm = (buffer[12] as u16)*256 + buffer[13] as u16;
+        frame.pm10_atm = (buffer[14] as u16)*256 + buffer[15] as u16;
+        frame.beyond_0_3 = (buffer[16] as u16)*256 + buffer[17] as u16;
+        frame.beyond_0_5 = (buffer[18] as u16)*256 + buffer[19] as u16;
+        frame.beyond_1_0 = (buffer[20] as u16)*256 + buffer[21] as u16;
+        frame.beyond_2_5 = (buffer[22] as u16)*256 + buffer[23] as u16;
+        frame.beyond_5_0 = (buffer[24] as u16)*256 + buffer[25] as u16;
+        frame.beyond_10_0 = (buffer[26] as u16)*256 + buffer[27] as u16;
+        frame.reserved = (buffer[28] as u16)*256 + buffer[29] as u16;
+        frame.check = (buffer[30] as u16)*256 + buffer[31] as u16;
 
         if sum != frame.check as usize {
             return Err(Error::ChecksumError);

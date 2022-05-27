@@ -117,19 +117,19 @@ fn create_command(cmd: u8, data: u16) -> [u8; CMD_FRAME_SIZE] {
     let mut buffer = [0_u8; CMD_FRAME_SIZE];
     let mut offset = 0usize;
 
-    buffer.gwrite::<u8>(MN1, &mut offset).unwrap();
-    buffer.gwrite::<u8>(MN2, &mut offset).unwrap();
-    buffer.gwrite::<u8>(cmd, &mut offset).unwrap();
-    buffer.gwrite_with::<u16>(data, &mut offset, BE).unwrap();
+//    buffer.gwrite::<u8>(MN1, &mut offset).unwrap();
+//    buffer.gwrite::<u8>(MN2, &mut offset).unwrap();
+//    buffer.gwrite::<u8>(cmd, &mut offset).unwrap();
+//    buffer.gwrite_with::<u16>(data, &mut offset, BE).unwrap();
 
-    let checksum = buffer
-        .iter()
-        .take(CMD_FRAME_SIZE - CHECKSUM_SIZE)
-        .map(|b| *b as u16)
-        .sum::<u16>();
-    buffer
-        .gwrite_with::<u16>(checksum, &mut offset, BE)
-        .unwrap();
+//    let checksum = buffer
+//        .iter()
+//        .take(CMD_FRAME_SIZE - CHECKSUM_SIZE)
+//        .map(|b| *b as u16)
+//        .sum::<u16>();
+//    buffer
+//        .gwrite_with::<u16>(checksum, &mut offset, BE)
+//        .unwrap();
 
     buffer
 }
@@ -167,23 +167,23 @@ impl OutputFrame {
         let mut frame = OutputFrame::default();
         let mut offset = 0usize;
 
-        frame.start1 = buffer.gread::<u8>(&mut offset).unwrap();
-        frame.start2 = buffer.gread::<u8>(&mut offset).unwrap();
-        frame.frame_length = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm2_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm10 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm1_0_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm2_5_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm10_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_0_3 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_0_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_2_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_5_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_10_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.reserved = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.check = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.start1 = buffer.gread::<u8>(&mut offset).unwrap();
+//        frame.start2 = buffer.gread::<u8>(&mut offset).unwrap();
+//        frame.frame_length = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.pm1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.pm2_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.pm10 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.pm1_0_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.pm2_5_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.pm10_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.beyond_0_3 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.beyond_0_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.beyond_1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.beyond_2_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.beyond_5_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.beyond_10_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.reserved = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+//        frame.check = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
 
         if sum != frame.check as usize {
             return Err(Error::ChecksumError);

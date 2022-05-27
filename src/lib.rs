@@ -2,7 +2,7 @@
 
 use embedded_hal::serial::{Read, Write};
 use nb::block;
-use scroll::{Pread, Pwrite, BE};
+//use scroll::{Pread, Pwrite, BE};
 
 mod read_fsm;
 

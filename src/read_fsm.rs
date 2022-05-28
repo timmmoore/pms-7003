@@ -24,15 +24,17 @@ pub struct ReadStateMachine<'a> {
     index: usize,
     state: State,
     retries: usize,
+    delay: &mut cortex_m::delay::Delay,
 }
 
 impl<'a> ReadStateMachine<'a> {
-    pub fn new(buffer: &'a mut [u8], retries: usize) -> Self {
+    pub fn new(buffer: &'a mut [u8], retries: usize, delay: &mut cortex_m::delay::Delay) -> Self {
         Self {
             buffer,
             index: 0,
             state: State::WaitingForFirstMagicNumber,
             retries,
+            delay,
         }
     }
 
@@ -41,6 +43,7 @@ impl<'a> ReadStateMachine<'a> {
             self.state = State::Failed;
         } else {
             self.retries -= 1;
+            delay.delay_ms(100);
         }
     }
 

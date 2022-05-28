@@ -51,10 +51,10 @@ where
         Self { serial }
     }
 
-    fn read_from_device<T: AsMut<[u8]>>(&mut self, mut buffer: T) -> Result<T, Error> {
+    fn read_from_device<T: AsMut<[u8]>>(&mut self, mut buffer: T, timer: &Timer) -> Result<T, Error> {
         use read_fsm::*;
 
-        let mut read = ReadStateMachine::new(buffer.as_mut(), 100);
+        let mut read = ReadStateMachine::new(buffer.as_mut(), 10, timer);
         loop {
             match read.update(self.serial.read()) {
                 ReadStatus::Failed => return Err(Error::ReadFailed),
@@ -65,8 +65,8 @@ where
     }
 
     /// Reads sensor status. Blocks until status is available.
-    pub fn read(&mut self) -> Result<OutputFrame, Error> {
-        OutputFrame::from_buffer(&self.read_from_device([0_u8; OUTPUT_FRAME_SIZE])?)
+    pub fn read(&mut self, delay: &mut cortex_m::delay::Delay) -> Result<OutputFrame, Error> {
+        OutputFrame::from_buffer(&self.read_from_device([0_u8; OUTPUT_FRAME_SIZE], delau)?)
     }
 
     /// Sleep mode. May fail because of incorrect reposnse because of race condition between response and air quality status

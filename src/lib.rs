@@ -6,7 +6,7 @@ use nb::block;
 mod read_fsm;
 
 const CMD_FRAME_SIZE: usize = 7;
-const OUTPUT_FRAME_SIZE: usize = 32;
+const OUTPUT_FRAME_SIZE: usize = 24; //32;
 const RESPONSE_FRAME_SIZE: usize = 8;
 const CHECKSUM_SIZE: usize = 2;
 

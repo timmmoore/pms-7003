@@ -1,6 +1,6 @@
 #![no_std]
 
-use cortex_m_rt::delay;
+//use cortex_m::delay;
 use embedded_hal::serial::{Read, Write};
 use nb::block;
 
@@ -105,18 +105,19 @@ where
         Ok(())
     }
 
-    fn receive_response(&mut self, expected_response: Response) -> Result<(), Error> {
-        if self.read_from_device([0u8; RESPONSE_FRAME_SIZE])? != expected_response {
+    fn receive_response(&mut self, _expected_response: Response) -> Result<(), Error> {
+        //if self.read_from_device([0u8; RESPONSE_FRAME_SIZE])? != expected_response {
             Err(Error::IncorrectResponse)
-        } else {
-            Ok(())
-        }
+        //} else {
+        //    Ok(())
+        //}
     }
 }
 
-fn create_command(cmd: u8, data: u16) -> [u8; CMD_FRAME_SIZE] {
-    let mut buffer = [0_u8; CMD_FRAME_SIZE];
-    let mut offset = 0usize;
+fn create_command(_cmd: u8, _data: u16) -> [u8; CMD_FRAME_SIZE] {
+    let buffer = [0_u8; CMD_FRAME_SIZE];
+//    let mut buffer = [0_u8; CMD_FRAME_SIZE];
+//    let mut offset = 0usize;
 
 //    buffer.gwrite::<u8>(MN1, &mut offset).unwrap();
 //    buffer.gwrite::<u8>(MN2, &mut offset).unwrap();

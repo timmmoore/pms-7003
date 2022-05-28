@@ -1,5 +1,5 @@
 use crate::{MN1, MN2};
-use cortex_m_rt::delay;
+//use cortex_m::delay;
 
 #[derive(PartialEq, Debug)]
 pub enum ReadStatus {
@@ -25,11 +25,11 @@ pub struct ReadStateMachine<'a> {
     index: usize,
     state: State,
     retries: usize,
-    delay: &mut cortex_m::delay::Delay,
+    delay: &'a mut cortex_m::delay::Delay,
 }
 
 impl<'a> ReadStateMachine<'a> {
-    pub fn new(buffer: &'a mut [u8], retries: usize, delay: &mut cortex_m::delay::Delay) -> Self {
+    pub fn new(buffer: &'a mut [u8], retries: usize, delay: &'a mut cortex_m::delay::Delay) -> Self {
         Self {
             buffer,
             index: 0,
@@ -44,7 +44,7 @@ impl<'a> ReadStateMachine<'a> {
             self.state = State::Failed;
         } else {
             self.retries -= 1;
-            delay.delay_ms(100);
+            self.delay.delay_ms(100);
         }
     }
 

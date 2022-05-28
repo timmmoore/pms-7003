@@ -187,7 +187,7 @@ impl OutputFrame {
         frame.check = (buffer[30] as u16)*256 + buffer[31] as u16;
 
         if sum != frame.check as usize {
-            return Err(Error::ChecksumError);
+//            return Err(Error::ChecksumError);
         }
 
         Ok(frame)

@@ -43,7 +43,8 @@ impl<'a> ReadStateMachine<'a> {
 
     fn retry(&mut self) {
         if self.retries == 0 {
-            self.state = State::Failed;
+            self.retries = 10;
+            //self.state = State::Failed;
         } else {
             self.retries -= 1;
 		let mut delayt = self.timer.count_down();

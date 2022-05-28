@@ -1,4 +1,5 @@
 use crate::{MN1, MN2};
+use cortex_m_rt::delay;
 
 #[derive(PartialEq, Debug)]
 pub enum ReadStatus {

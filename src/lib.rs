@@ -173,19 +173,19 @@ pub struct OutputFrame {
 
 impl OutputFrame {
     pub fn from_buffer(buffer: &[u8; OUTPUT_FRAME_SIZE]) -> Result<Self, Error> {
-//        let sum: u32 = buffer
-//            .iter()
-//            .take(OUTPUT_FRAME_SIZE - CHECKSUM_SIZE)
-//            .map(|e| *e as u32)
-//            .sum();
-        let mut sum: u16 = buffer[0] as u16 + buffer[1] as u16 + buffer[2] as u16 + buffer[3] as u16;
-        sum += buffer[4] as u16 + buffer[5] as u16 + buffer[6] as u16 + buffer[7] as u16;
-        sum += buffer[8] as u16 + buffer[9] as u16 + buffer[10] as u16 + buffer[11] as u16;
-        sum += buffer[12] as u16 + buffer[13] as u16 + buffer[14] as u16 + buffer[15] as u16;
-        sum += buffer[16] as u16 + buffer[17] as u16 + buffer[18] as u16 + buffer[19] as u16;
-        sum += buffer[20] as u16 + buffer[21] as u16 + buffer[22] as u16 + buffer[23] as u16;
-        sum += buffer[24] as u16 + buffer[25] as u16 + buffer[26] as u16 + buffer[27] as u16;
-        sum += buffer[28] as u16 + buffer[29] as u16;
+        let sum: u16 = buffer
+            .iter()
+            .take(OUTPUT_FRAME_SIZE - CHECKSUM_SIZE)
+            .map(|e| *e as u16)
+            .sum();
+//        let mut sum: u16 = buffer[0] as u16 + buffer[1] as u16 + buffer[2] as u16 + buffer[3] as u16;
+//        sum += buffer[4] as u16 + buffer[5] as u16 + buffer[6] as u16 + buffer[7] as u16;
+//        sum += buffer[8] as u16 + buffer[9] as u16 + buffer[10] as u16 + buffer[11] as u16;
+//        sum += buffer[12] as u16 + buffer[13] as u16 + buffer[14] as u16 + buffer[15] as u16;
+//        sum += buffer[16] as u16 + buffer[17] as u16 + buffer[18] as u16 + buffer[19] as u16;
+//        sum += buffer[20] as u16 + buffer[21] as u16 + buffer[22] as u16 + buffer[23] as u16;
+//        sum += buffer[24] as u16 + buffer[25] as u16 + buffer[26] as u16 + buffer[27] as u16;
+//        sum += buffer[28] as u16 + buffer[29] as u16;
  
         let mut frame = OutputFrame::default();
 

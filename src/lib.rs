@@ -56,6 +56,11 @@ where
     fn read_from_device<T: AsMut<[u8]>>(&mut self, mut buffer: T, timer: &Timer) -> Result<T, Error> {
         use read_fsm::*;
 
+        loop {
+            if self.serial.read().is_err() {
+                break;
+            }
+        }
         let mut read = ReadStateMachine::new(buffer.as_mut(), 200, timer);
         loop {
             match read.update(self.serial.read()) {

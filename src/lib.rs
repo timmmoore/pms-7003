@@ -7,7 +7,7 @@ use nb::block;
 mod read_fsm;
 
 const CMD_FRAME_SIZE: usize = 7;
-const OUTPUT_FRAME_SIZE: usize = 28; //32;
+const OUTPUT_FRAME_SIZE: usize = 32;
 const RESPONSE_FRAME_SIZE: usize = 8;
 const CHECKSUM_SIZE: usize = 2;
 
@@ -182,10 +182,10 @@ impl OutputFrame {
         frame.beyond_1_0 = (buffer[20] as u16)*256_u16 + buffer[21] as u16;
         frame.beyond_2_5 = (buffer[22] as u16)*256_u16 + buffer[23] as u16;
         frame.beyond_5_0 = (buffer[24] as u16)*256_u16 + buffer[25] as u16;
-//        frame.beyond_10_0 = (buffer[26] as u16)*256_u16 + buffer[27] as u16;
-//        frame.reserved = (buffer[28] as u16)*256_u16 + buffer[29] as u16;
-//        frame.check = (buffer[30] as u16)*256_u16 + buffer[31] as u16;
-        frame.check = (buffer[26] as u16)*256_u16 + buffer[27] as u16;
+        frame.beyond_10_0 = (buffer[26] as u16)*256_u16 + buffer[27] as u16;
+        frame.reserved = (buffer[28] as u16)*256_u16 + buffer[29] as u16;
+        frame.check = (buffer[30] as u16)*256_u16 + buffer[31] as u16;
+//        frame.check = (buffer[26] as u16)*256_u16 + buffer[27] as u16;
 
         if sum != frame.check as usize {
 		frame.start1 = 1;

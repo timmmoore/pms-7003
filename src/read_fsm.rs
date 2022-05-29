@@ -47,7 +47,7 @@ impl<'a> ReadStateMachine<'a> {
         } else {
             self.retries -= 1;
 		let mut delayt = self.timer.count_down();
-            delayt.start(10_u32.milliseconds());
+            delayt.start(2_u32.milliseconds());
             let _ = nb::block!(delayt.wait());
         }
     }

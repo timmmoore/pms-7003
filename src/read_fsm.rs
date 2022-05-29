@@ -1,4 +1,7 @@
 use crate::{MN1, MN2};
+use rp2040_hal::Timer;
+use embedded_time::duration::units::Extensions;
+use embedded_hal::prelude::_embedded_hal_timer_CountDown;
 
 #[derive(PartialEq, Debug)]
 pub enum ReadStatus {
@@ -24,15 +27,17 @@ pub struct ReadStateMachine<'a> {
     index: usize,
     state: State,
     retries: usize,
+    timer: &'a Timer,
 }
 
 impl<'a> ReadStateMachine<'a> {
-    pub fn new(buffer: &'a mut [u8], retries: usize) -> Self {
+    pub fn new(buffer: &'a mut [u8], retries: usize, timer: &'a Timer) -> Self {
         Self {
             buffer,
             index: 0,
             state: State::WaitingForFirstMagicNumber,
             retries,
+            timer,
         }
     }
 
@@ -41,6 +46,9 @@ impl<'a> ReadStateMachine<'a> {
             self.state = State::Failed;
         } else {
             self.retries -= 1;
+		let mut delayt = self.timer.count_down();
+            delayt.start(10_u32.milliseconds());
+            let _ = nb::block!(delayt.wait());
         }
     }
 

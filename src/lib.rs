@@ -1,8 +1,8 @@
 #![no_std]
 
+use rp2040_hal::Timer;
 use embedded_hal::serial::{Read, Write};
 use nb::block;
-//use scroll::{Pread, Pwrite, BE};
 
 mod read_fsm;
 
@@ -34,6 +34,7 @@ where
     Serial: Read<u8> + Write<u8>,
 {
     serial: Serial,
+    
 }
 
 impl<Serial> Pms7003Sensor<Serial>
@@ -52,13 +53,25 @@ where
         Self { serial }
     }
 
-    fn read_from_device<T: AsMut<[u8]>>(&mut self, mut buffer: T) -> Result<T, Error> {
+    fn read_from_device<T: AsMut<[u8]>>(&mut self, mut buffer: T, timer: &Timer) -> Result<T, Error> {
         use read_fsm::*;
 
-        let mut read = ReadStateMachine::new(buffer.as_mut(), 10);
+        loop {
+            if self.serial.read().is_err() {
+                break;
+            }
+        }
+        let mut read = ReadStateMachine::new(buffer.as_mut(), 200, timer);
         loop {
             match read.update(self.serial.read()) {
-                ReadStatus::Failed => return Err(Error::ReadFailed),
+                ReadStatus::Failed => {
+                    loop {
+                        if self.serial.read().is_err() {
+                            break;
+                        }
+                    }
+                    return Err(Error::ReadFailed)
+                },
                 ReadStatus::Finished => return Ok(buffer),
                 ReadStatus::InProgress => {}
             }
@@ -66,8 +79,9 @@ where
     }
 
     /// Reads sensor status. Blocks until status is available.
-    pub fn read(&mut self) -> Result<OutputFrame, Error> {
-        OutputFrame::from_buffer(&self.read_from_device([0_u8; OUTPUT_FRAME_SIZE])?)
+    pub fn read(&mut self, timer: &Timer) -> Result<OutputFrame, Error> {
+        let buf: [u8; OUTPUT_FRAME_SIZE] = [0;OUTPUT_FRAME_SIZE];
+        OutputFrame::from_buffer(&self.read_from_device(buf, timer)?)
     }
 
     /// Sleep mode. May fail because of incorrect reposnse because of race condition between response and air quality status
@@ -104,32 +118,33 @@ where
         Ok(())
     }
 
-    fn receive_response(&mut self, expected_response: Response) -> Result<(), Error> {
-        if self.read_from_device([0u8; RESPONSE_FRAME_SIZE])? != expected_response {
+    fn receive_response(&mut self, _expected_response: Response) -> Result<(), Error> {
+        //if self.read_from_device([0u8; RESPONSE_FRAME_SIZE])? != expected_response {
             Err(Error::IncorrectResponse)
-        } else {
-            Ok(())
-        }
+        //} else {
+        //    Ok(())
+        //}
     }
 }
 
-fn create_command(cmd: u8, data: u16) -> [u8; CMD_FRAME_SIZE] {
-    let mut buffer = [0_u8; CMD_FRAME_SIZE];
-    let mut offset = 0usize;
+fn create_command(_cmd: u8, _data: u16) -> [u8; CMD_FRAME_SIZE] {
+    let buffer = [0_u8; CMD_FRAME_SIZE];
+//    let mut buffer = [0_u8; CMD_FRAME_SIZE];
+//    let mut offset = 0usize;
 
-    buffer.gwrite::<u8>(MN1, &mut offset).unwrap();
-    buffer.gwrite::<u8>(MN2, &mut offset).unwrap();
-    buffer.gwrite::<u8>(cmd, &mut offset).unwrap();
-    buffer.gwrite_with::<u16>(data, &mut offset, BE).unwrap();
+//    buffer.gwrite::<u8>(MN1, &mut offset).unwrap();
+//    buffer.gwrite::<u8>(MN2, &mut offset).unwrap();
+//    buffer.gwrite::<u8>(cmd, &mut offset).unwrap();
+//    buffer.gwrite_with::<u16>(data, &mut offset, BE).unwrap();
 
-    let checksum = buffer
-        .iter()
-        .take(CMD_FRAME_SIZE - CHECKSUM_SIZE)
-        .map(|b| *b as u16)
-        .sum::<u16>();
-    buffer
-        .gwrite_with::<u16>(checksum, &mut offset, BE)
-        .unwrap();
+//    let checksum = buffer
+//        .iter()
+//        .take(CMD_FRAME_SIZE - CHECKSUM_SIZE)
+//        .map(|b| *b as u16)
+//        .sum::<u16>();
+//    buffer
+//        .gwrite_with::<u16>(checksum, &mut offset, BE)
+//        .unwrap();
 
     buffer
 }
@@ -158,37 +173,43 @@ pub struct OutputFrame {
 
 impl OutputFrame {
     pub fn from_buffer(buffer: &[u8; OUTPUT_FRAME_SIZE]) -> Result<Self, Error> {
-        let sum: usize = buffer
+        let sum: u16 = buffer
             .iter()
             .take(OUTPUT_FRAME_SIZE - CHECKSUM_SIZE)
-            .map(|e| *e as usize)
+            .map(|e| *e as u16)
             .sum();
-
+//        let mut sum: u16 = buffer[0] as u16 + buffer[1] as u16 + buffer[2] as u16 + buffer[3] as u16;
+//        sum += buffer[4] as u16 + buffer[5] as u16 + buffer[6] as u16 + buffer[7] as u16;
+//        sum += buffer[8] as u16 + buffer[9] as u16 + buffer[10] as u16 + buffer[11] as u16;
+//        sum += buffer[12] as u16 + buffer[13] as u16 + buffer[14] as u16 + buffer[15] as u16;
+//        sum += buffer[16] as u16 + buffer[17] as u16 + buffer[18] as u16 + buffer[19] as u16;
+//        sum += buffer[20] as u16 + buffer[21] as u16 + buffer[22] as u16 + buffer[23] as u16;
+//        sum += buffer[24] as u16 + buffer[25] as u16 + buffer[26] as u16 + buffer[27] as u16;
+//        sum += buffer[28] as u16 + buffer[29] as u16;
+ 
         let mut frame = OutputFrame::default();
-        let mut offset = 0usize;
 
-        frame.start1 = buffer.gread::<u8>(&mut offset).unwrap();
-        frame.start2 = buffer.gread::<u8>(&mut offset).unwrap();
-        frame.frame_length = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm2_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm10 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm1_0_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm2_5_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.pm10_atm = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_0_3 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_0_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_1_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_2_5 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_5_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.beyond_10_0 = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.reserved = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
-        frame.check = buffer.gread_with::<u16>(&mut offset, BE).unwrap();
+        frame.start1 = buffer[0];
+        frame.start2 = buffer[1];
+        frame.frame_length = (buffer[2] as u16)*256_u16 + buffer[3] as u16;
+        frame.pm1_0 = (buffer[4] as u16)*256_u16 + buffer[5] as u16;
+        frame.pm2_5 = (buffer[6] as u16)*256_u16 + buffer[7] as u16;
+        frame.pm10 = (buffer[8] as u16)*256_u16 + buffer[9] as u16;
+        frame.pm1_0_atm = (buffer[10] as u16)*256_u16 + buffer[11] as u16;
+        frame.pm2_5_atm = (buffer[12] as u16)*256_u16 + buffer[13] as u16;
+        frame.pm10_atm = (buffer[14] as u16)*256_u16 + buffer[15] as u16;
+        frame.beyond_0_3 = (buffer[16] as u16)*256_u16 + buffer[17] as u16;
+        frame.beyond_0_5 = (buffer[18] as u16)*256_u16 + buffer[19] as u16;
+        frame.beyond_1_0 = (buffer[20] as u16)*256_u16 + buffer[21] as u16;
+        frame.beyond_2_5 = (buffer[22] as u16)*256_u16 + buffer[23] as u16;
+        frame.beyond_5_0 = (buffer[24] as u16)*256_u16 + buffer[25] as u16;
+        frame.beyond_10_0 = (buffer[26] as u16)*256_u16 + buffer[27] as u16;
+        frame.reserved = (buffer[28] as u16)*256_u16 + buffer[29] as u16;
+        frame.check = (buffer[30] as u16)*256_u16 + buffer[31] as u16;
 
-        if sum != frame.check as usize {
+        if sum != frame.check {
             return Err(Error::ChecksumError);
         }
-
         Ok(frame)
     }
 }

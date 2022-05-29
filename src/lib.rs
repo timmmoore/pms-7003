@@ -170,21 +170,21 @@ impl OutputFrame {
 
         frame.start1 = buffer[0];
         frame.start2 = buffer[1];
-        frame.frame_length = (buffer[2] as u16)*256 + buffer[3] as u16;
-        frame.pm1_0 = (buffer[4] as u16)*256 + buffer[5] as u16;
-        frame.pm2_5 = (buffer[6] as u16)*256 + buffer[7] as u16;
-        frame.pm10 = (buffer[8] as u16)*256 + buffer[9] as u16;
-        frame.pm1_0_atm = (buffer[10] as u16)*256 + buffer[11] as u16;
-        frame.pm2_5_atm = (buffer[12] as u16)*256 + buffer[13] as u16;
-        frame.pm10_atm = (buffer[14] as u16)*256 + buffer[15] as u16;
-        frame.beyond_0_3 = (buffer[16] as u16)*256 + buffer[17] as u16;
-        frame.beyond_0_5 = (buffer[18] as u16)*256 + buffer[19] as u16;
-        frame.beyond_1_0 = (buffer[20] as u16)*256 + buffer[21] as u16;
-        frame.beyond_2_5 = (buffer[22] as u16)*256 + buffer[23] as u16;
-        frame.beyond_5_0 = (buffer[24] as u16)*256 + buffer[25] as u16;
-        frame.beyond_10_0 = (buffer[26] as u16)*256 + buffer[27] as u16;
-        frame.reserved = (buffer[28] as u16)*256 + buffer[29] as u16;
-        frame.check = (buffer[30] as u16)*256 + buffer[31] as u16;
+        frame.frame_length = (buffer[2] as u16)*256_u16 + buffer[3] as u16;
+        frame.pm1_0 = (buffer[4] as u16)*256_u16 + buffer[5] as u16;
+        frame.pm2_5 = (buffer[6] as u16)*256_u16 + buffer[7] as u16;
+        frame.pm10 = (buffer[8] as u16)*256_u16 + buffer[9] as u16;
+        frame.pm1_0_atm = (buffer[10] as u16)*256_u16 + buffer[11] as u16;
+        frame.pm2_5_atm = (buffer[12] as u16)*256_u16 + buffer[13] as u16;
+        frame.pm10_atm = (buffer[14] as u16)*256_u16 + buffer[15] as u16;
+        frame.beyond_0_3 = (buffer[16] as u16)*256_u16 + buffer[17] as u16;
+        frame.beyond_0_5 = (buffer[18] as u16)*256_u16 + buffer[19] as u16;
+        frame.beyond_1_0 = (buffer[20] as u16)*256_u16 + buffer[21] as u16;
+        frame.beyond_2_5 = (buffer[22] as u16)*256_u16 + buffer[23] as u16;
+        frame.beyond_5_0 = (buffer[24] as u16)*256_u16 + buffer[25] as u16;
+        frame.beyond_10_0 = (buffer[26] as u16)*256_u16 + buffer[27] as u16;
+        frame.reserved = (buffer[28] as u16)*256_u16 + buffer[29] as u16;
+        frame.check = (buffer[30] as u16)*256_u16 + buffer[31] as u16;
 
         if sum != frame.check as usize {
             return Err(Error::ChecksumError);

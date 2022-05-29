@@ -168,10 +168,10 @@ pub struct OutputFrame {
 
 impl OutputFrame {
     pub fn from_buffer(buffer: &[u8; OUTPUT_FRAME_SIZE]) -> Result<Self, Error> {
-        let sum: usize = buffer
+        let sum: u32 = buffer
             .iter()
             .take(OUTPUT_FRAME_SIZE - CHECKSUM_SIZE)
-            .map(|e| *e as usize)
+            .map(|e| *e as u32)
             .sum();
 
         let mut frame = OutputFrame::default();
@@ -193,17 +193,13 @@ impl OutputFrame {
         frame.beyond_10_0 = (buffer[26] as u16)*256_u16 + buffer[27] as u16;
         frame.reserved = (buffer[28] as u16)*256_u16 + buffer[29] as u16;
         frame.check = (buffer[30] as u16)*256_u16 + buffer[31] as u16;
-//        frame.check = (buffer[26] as u16)*256_u16 + buffer[27] as u16;
 
-        if sum != frame.check as usize {
+        if sum != frame.check as u32 {
 		frame.start1 = 1;
         	frame.reserved = sum as u16;
 		return Ok(frame)
 //            return Err(Error::ChecksumError);
         }
-        //frame.reserved = sum as u16;
-        //frame.start1 = buffer[30];
-        //frame.start2 = buffer[31];
 
         Ok(frame)
     }

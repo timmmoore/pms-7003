@@ -7,7 +7,7 @@ use nb::block;
 mod read_fsm;
 
 const CMD_FRAME_SIZE: usize = 7;
-const OUTPUT_FRAME_SIZE: usize = 32;
+const OUTPUT_FRAME_SIZE: usize = 28; //32;
 const RESPONSE_FRAME_SIZE: usize = 8;
 const CHECKSUM_SIZE: usize = 2;
 
@@ -56,7 +56,7 @@ where
     fn read_from_device<T: AsMut<[u8]>>(&mut self, mut buffer: T, timer: &Timer) -> Result<T, Error> {
         use read_fsm::*;
 
-        let mut read = ReadStateMachine::new(buffer.as_mut(), 500, timer);
+        let mut read = ReadStateMachine::new(buffer.as_mut(), 100, timer);
         loop {
             match read.update(self.serial.read()) {
                 ReadStatus::Failed => return Err(Error::ReadFailed),

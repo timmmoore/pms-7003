@@ -59,7 +59,14 @@ where
         let mut read = ReadStateMachine::new(buffer.as_mut(), 200, timer);
         loop {
             match read.update(self.serial.read()) {
-                ReadStatus::Failed => return Err(Error::ReadFailed),
+                ReadStatus::Failed => {
+                    loop {
+                        if self.serial.read().is_err() {
+                            break;
+                        }
+                    }
+                    return Err(Error::ReadFailed)
+                },
                 ReadStatus::Finished => return Ok(buffer),
                 ReadStatus::InProgress => {}
             }

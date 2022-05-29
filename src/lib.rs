@@ -68,7 +68,8 @@ where
 
     /// Reads sensor status. Blocks until status is available.
     pub fn read(&mut self, timer: &Timer) -> Result<OutputFrame, Error> {
-        OutputFrame::from_buffer(&self.read_from_device([0_u8; OUTPUT_FRAME_SIZE], timer)?)
+        let buf: [u8; OUTPUT_FRAME_SIZE] = [0;OUTPUT_FRAME_SIZE];
+        OutputFrame::from_buffer(&self.read_from_device(buf, timer)?)
     }
 
     /// Sleep mode. May fail because of incorrect reposnse because of race condition between response and air quality status

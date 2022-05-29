@@ -32,6 +32,28 @@ pub struct ReadStateMachine<'a> {
 
 impl<'a> ReadStateMachine<'a> {
     pub fn new(buffer: &'a mut [u8], retries: usize, timer: &'a Timer) -> Self {
+        buffer[0] = 0;
+        buffer[1] = 0;
+        buffer[2] = 0;
+        buffer[3] = 0;
+        buffer[4] = 0;
+        buffer[5] = 0;
+        buffer[6] = 0;
+        buffer[7] = 0;
+        buffer[8] = 0;
+        buffer[9] = 0;
+        buffer[10] = 0;
+        buffer[21] = 0;
+        buffer[22] = 0;
+        buffer[23] = 0;
+        buffer[24] = 0;
+        buffer[25] = 0;
+        buffer[26] = 0;
+        buffer[27] = 0;
+        buffer[28] = 0;
+        buffer[29] = 0;
+        buffer[30] = 0;
+        buffer[31] = 0;
         Self {
             buffer,
             index: 0,
